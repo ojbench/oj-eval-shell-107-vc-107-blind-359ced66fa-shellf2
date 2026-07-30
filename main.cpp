@@ -5,10 +5,10 @@ namespace LIST {
     struct NODE {
         int val;
         NODE* next;
-        NODE(int v=0): val(v), next(nullptr) {}
+        NODE(int v = 0) : val(v), next(nullptr) {}
     };
 
-    NODE *head = nullptr;
+    NODE* head = nullptr;
     int len = 0;
 
     void init() {
@@ -16,7 +16,6 @@ namespace LIST {
         len = 0;
     }
 
-    // move to node at index i (0-based). Assumes 0 <= i < len.
     NODE* move(int i) {
         if (len == 0 || i < 0 || i >= len) return nullptr;
         NODE* cur = head;
@@ -25,16 +24,14 @@ namespace LIST {
     }
 
     void insert(int i, int x) {
-        // insert so that new node ends up at position i (0-based)
         NODE* node = new NODE(x);
         if (len == 0) {
-            node->next = node; // circular self
+            node->next = node;
             head = node;
             len = 1;
             return;
         }
         if (i <= 0) {
-            // insert before head, becomes new head
             NODE* tail = move(len - 1);
             node->next = head;
             head = node;
@@ -43,14 +40,12 @@ namespace LIST {
             return;
         }
         if (i >= len) {
-            // insert at end (after current tail)
             NODE* tail = move(len - 1);
             tail->next = node;
             node->next = head;
             ++len;
             return;
         }
-        // insert before position i, i in (0, len)
         NODE* prev = move(i - 1);
         node->next = prev->next;
         prev->next = node;
@@ -58,7 +53,7 @@ namespace LIST {
     }
 
     void remove(int i) {
-        if (len == 0 || i < 0 || i >= len) return; // as per guarantee, but safe
+        if (len == 0 || i < 0 || i >= len) return;
         if (len == 1) {
             delete head;
             head = nullptr;
@@ -83,50 +78,41 @@ namespace LIST {
     }
 
     void remove_insert(int i) {
-        if (len <= 1 || i < 0 || i >= len) return; // nothing to do
-        if (i == len - 1) {
-            // already at tail
-            return;
-        }
+        if (len <= 1 || i < 0 || i >= len) return;
+        if (i == len - 1) return;
         if (i == 0) {
-            // move head node to tail
             NODE* node = head;
             NODE* new_head = head->next;
             NODE* tail = move(len - 1);
-            node->next = new_head; // ensure node will point to new head when placed at tail
-            // tail->next already points to head (node). It will remain pointing to node which is fine.
             head = new_head;
-            // Explicitly set tail->next to node (no change for clarity)
             tail->next = node;
+            node->next = head;
             return;
         }
-        // detach node at position i
+        NODE* tail = move(len - 1);
         NODE* prev = move(i - 1);
         NODE* node = prev->next;
         prev->next = node->next;
-        // append node at tail
-        NODE* tail = move(len - 1);
         tail->next = node;
         node->next = head;
-        // length unchanged
     }
 
     void get_length() {
-        cout << len << n;
+        cout << len << '\n';
     }
 
     void query(int i) {
         if (i < 0 || i >= len) {
-            cout << -1 << n;
+            cout << -1 << '\n';
             return;
         }
-        NODE* n = move(i);
-        cout << (n ? n->val : -1) << n;
+        NODE* node = move(i);
+        cout << node->val << '\n';
     }
 
     void get_max() {
         if (len == 0) {
-            cout << -1 << n;
+            cout << -1 << '\n';
             return;
         }
         int mx = INT_MIN;
@@ -135,12 +121,11 @@ namespace LIST {
             mx = max(mx, cur->val);
             cur = cur->next;
         }
-        cout << mx << n;
+        cout << mx << '\n';
     }
 
     void clear() {
         if (len == 0) return;
-        // break the cycle to simplify deletion
         NODE* tail = move(len - 1);
         tail->next = nullptr;
         NODE* cur = head;
@@ -192,4 +177,3 @@ int main() {
     LIST::clear();
     return 0;
 }
-
